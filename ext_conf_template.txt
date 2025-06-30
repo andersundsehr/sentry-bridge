@@ -1,0 +1,17 @@
+# cat=sentry; type=boolean; label=Enablel compression
+compress = 0
+
+# cat=sentry; type=string; label=Maximum number of items to store in queue
+limit = 100
+
+# cat=sentry; type=string; label=Directory to store the queue
+directory = var/andersundsehr/sentry-async
+
+# cat=sentry; type=string; label=Breadcrumb log level (emergency, alert, critical, error, warning, notice, info, debug)
+breadcrumb_log_level = debug
+
+# cat=sentry; type=boolean; label=Content exception: Send a sentry link with oops-code
+sentry_link_with_oops_code = 0
+
+# cat=sentry; type=string; label=Change sentry organisation
+sentry_organisation = sentry

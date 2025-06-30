@@ -1,0 +1,43 @@
+{
+  "name": "andersundsehr/sentry-bridge",
+  "description": "Brings together networkteam/sentry-client with further features",
+  "license": [
+    "GPL-2.0-or-later"
+  ],
+  "type": "typo3-cms-extension",
+  "version": "dev-",
+  "require": {
+    "andersundsehr/sentry-async": "@dev",
+    "networkteam/sentry-client": "^5.2.1",
+    "typo3/cms-core": "^12.4"
+  },
+  "require-dev": {
+    "pluswerk/grumphp-config": "^7.2.0",
+    "saschaegerer/phpstan-typo3": "^1.10.0",
+    "ssch/typo3-rector": "^2.5.0"
+  },
+  "replace": {
+    "pluswerk/sentry": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "AUS\\SentryBridge\\": "Classes/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "ergebnis/composer-normalize": true,
+      "php-http/discovery": true,
+      "phpro/grumphp": true,
+      "phpstan/extension-installer": true,
+      "pluswerk/grumphp-config": true,
+      "typo3/class-alias-loader": true,
+      "typo3/cms-composer-installers": true
+    }
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "sentry_bridge"
+    }
+  }
+}
