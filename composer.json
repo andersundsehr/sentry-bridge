@@ -7,21 +7,43 @@
   "type": "typo3-cms-extension",
   "version": "dev-",
   "require": {
-    "andersundsehr/sentry-async": "@dev",
+    "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
+    "andersundsehr/sentry-async": "^3.0.0",
     "networkteam/sentry-client": "^5.2.1",
-    "typo3/cms-core": "^12.4"
+    "typo3/cms-core": "^12.4 || ^13.4"
   },
   "require-dev": {
-    "pluswerk/grumphp-config": "^7.2.0",
-    "saschaegerer/phpstan-typo3": "^1.10.0",
-    "ssch/typo3-rector": "^2.5.0"
+    "helhum/typo3-console": "^8.2",
+    "phpunit/phpunit": "^10 || ^12.3",
+    "pluswerk/grumphp-config": "^7.2.0 || ^10.1.1",
+    "pluswerk/sentry_test_extension": "@dev",
+    "saschaegerer/phpstan-typo3": "^1.10.2 || ^2.1.1",
+    "ssch/typo3-rector": "^2.13.1 || ^3.6.2",
+    "typo3/cms-composer-installers": "^4.0-rc || ^5.0",
+    "typo3/cms-lowlevel": "*",
+    "typo3/cms-tstemplate": "*",
+    "typo3/minimal": "^13"
   },
   "replace": {
     "pluswerk/sentry": "*"
   },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "config/test_extension",
+      "options": {
+        "symlink": true
+      }
+    }
+  ],
   "autoload": {
     "psr-4": {
       "AUS\\SentryBridge\\": "Classes/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "AUS\\SentryBridge\\Tests\\": "Tests/"
     }
   },
   "config": {
@@ -39,5 +61,26 @@
     "typo3/cms": {
       "extension-key": "sentry_bridge"
     }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "rm -rf var/sqlite",
+      "mkdir -p public/typo3conf",
+      "echo \"<?php return require __DIR__ . '/../../config/system/settings.php';\" > public/typo3conf/LocalConfiguration.php",
+      "echo \"<?php require __DIR__ . '/../../config/system/additional.php';\" > public/typo3conf/AdditionalConfiguration.php",
+      "typo3 database:updateschema -vvv '*'",
+      "typo3 extension:setup -vvv",
+      "typo3 cache:flush -vvv",
+      "typo3 cache:warmup -vvv",
+      "typo3 install:fixfolderstructure -vvv",
+      "typo3 test-extension:setup-db -f -vvv"
+    ],
+    "run-test-server": [
+      "Composer\\Config::disableProcessTimeout",
+      "TYPO3_CONTEXT=Production php -S 0.0.0.0:1180 -t public/"
+    ],
+    "test": [
+      "phpunit --color=always"
+    ]
   }
 }
