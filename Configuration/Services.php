@@ -1,6 +1,7 @@
 <?php
 
 use AUS\SentryAsync\Queue\FileQueue;
+use AUS\SentryBridge\EventListener\ConsoleErrorEventListener;
 use Sentry\ClientInterface;
 use Sentry\Client;
 use AUS\SentryAsync\Command\FlushCommand;
@@ -10,6 +11,7 @@ use AUS\SentryAsync\Queue\QueueInterface;
 use AUS\SentryBridge\Factory\FileQueueFactory;
 use AUS\SentryBridge\Factory\SentryClientFactory;
 use AUS\SentryBridge\Handler\ContentObjectProductionExceptionHandler;
+use Symfony\Component\Console\Event\ConsoleErrorEvent;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Reference;
@@ -44,27 +46,32 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
         ->autoconfigure(false);
 
     $services->alias(ClientInterface::class, Client::class);
-        $services->set(ClientInterface::class)
+    $services->set(ClientInterface::class)
         ->factory([service(SentryClientFactory::class), '__invoke']);
     $services->alias(QueueInterface::class, FileQueue::class);
 
-    $builder->register(
-        'pluswerk.sentry.original.contentObject.productionExceptionHandler',
-        ProductionExceptionHandler::class
-    );
-    $builder->register(
-        ProductionExceptionHandler::class,
-        ContentObjectProductionExceptionHandler::class
-    )
+    $original = 'andersundsehr.sentry-bridge.original.contentObject.productionExceptionHandler';
+    $builder->register($original, ProductionExceptionHandler::class)
+        ->setPublic(true)
+        ->setShared(false)
+        ->setAutowired(true)
+        ->setAutoconfigured(true);
+    $builder->register(ProductionExceptionHandler::class, ContentObjectProductionExceptionHandler::class)
         ->setPublic(true)
         ->setShared(false)
         ->setArguments([
-            '$productionExceptionHandler' => new Reference('pluswerk.sentry.original.contentObject.productionExceptionHandler'),
+            '$productionExceptionHandler' => new Reference($original),
         ]);
 
     $services->set(FlushCommand::class)
         ->tag('console.command', [
             'command' => 'andersundsehr:sentry-async:flush',
             'description' => 'Transports potentially queued sentry events'
+        ]);
+
+    $services->set(ConsoleErrorEventListener::class)
+        ->tag('event.listener', [
+            'identifier' => 'andersundsehr/sentry-bridge/console-error-event-listener',
+            'event' => ConsoleErrorEvent::class
         ]);
 };

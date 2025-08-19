@@ -12,7 +12,6 @@ class SentryClientFactory
 {
     public function __invoke(): ?ClientInterface
     {
-        SentryService::inititalize();
         return SentrySdk::getCurrentHub()->getClient();
     }
 }
