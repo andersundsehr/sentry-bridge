@@ -9,7 +9,7 @@
     "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
     "andersundsehr/sentry-async": "^3.0.0",
     "networkteam/sentry-client": "^5.2.1 || ^6.0",
-    "typo3/cms-core": "^12.4 || ^13.4 || ^14.0"
+    "typo3/cms-core": "^13.4 || ^14.0"
   },
   "require-dev": {
     "helhum/typo3-console": "^8.2",
@@ -55,11 +55,6 @@
       "pluswerk/grumphp-config": true,
       "typo3/class-alias-loader": true,
       "typo3/cms-composer-installers": true
-    },
-    "policy": {
-      "advisories": {
-        "block": false
-      }
     }
   },
   "extra": {
