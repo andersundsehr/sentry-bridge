@@ -17,6 +17,10 @@ jobs:
           # TYPO3 v14 requires PHP >= 8.3
           - php: '8.2'
             typo3: '14'
+    env:
+      # pluswerk/grumphp-config runs its own `composer update` (without our flags) to install TYPO3 related packages.
+      # phpro/grumphp does not allow PHP 8.6 yet, so ignore the upper PHP bound there as well.
+      COMPOSER_IGNORE_PLATFORM_REQ: 'php+'
     steps:
       - name: Setup PHP with PECL extension
         uses: shivammathur/setup-php@v2
